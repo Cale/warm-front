@@ -3,7 +3,8 @@ var Weather = React.createClass({displayName: 'Weather',
     return {
       conditions:   [],
       location:     "",
-      forecast:     []
+      forecast:     [],
+      showWX:     true
     };
   },
 
@@ -55,16 +56,21 @@ var Weather = React.createClass({displayName: 'Weather',
 
   componentDidMount: function() {
     this.getGeoLocation();
-    //setInterval(this.getGeoLocation, this.props.pollInterval);
+    setInterval(this.getGeoLocation, this.props.pollInterval);
+  },
+
+  onClick: function() {
+    this.setState({ showWX: !this.state.showWX })
   },
 
   render: function() {
     console.log("Rendering weather div");
     console.log(this.state.conditions);
     return (
-      <div className="weather">
-        <Conditions conditions={this.state.conditions} location={this.state.location} />
-        <Forecast data={this.state.forecast} />
+      <div className="weather" onClick={this.onClick}>
+        { this.state.showWX ? <Conditions conditions={this.state.conditions} location={this.state.location} /> : null }
+        { this.state.showWX ? <Forecast data={this.state.forecast} /> : null }
+        { !this.state.showWX ? <Back /> : null }
       </div>
     );
   }
@@ -99,11 +105,11 @@ var Forecast = React.createClass({
   }
 });
 
-var SomethingElse = React.createClass({
+var Back = React.createClass({
   render: function() {
     return (
-      <div className="conditions">
-        Conditions
+      <div className="back">
+        <p>This is the back.</p>
       </div>
     );
   }
