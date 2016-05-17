@@ -15,8 +15,15 @@ var Weather = React.createClass({displayName: 'Weather',
       navigator.geolocation.getCurrentPosition(function(position) {
         console.log(position.coords.latitude+","+position.coords.longitude);
         that.getWoeid(position.coords.latitude+","+position.coords.longitude);
-      }, function(error) {
-        console.error("We couldn't get your location.");
+      },
+        function(failure) {
+          // Chrome no longer allows access to geolocation API over non-secure connections.
+          if(failure.message.indexOf("Only secure origins are allowed") == 0) {
+            console.log("Failure")
+            document.getElementById('conditions').innerHTML = 'Chrome does not allow location access over non-secure sites. Please try again with a <a href="https://www.mozilla.org/en-US/firefox/new/">different web browser</a>.';
+          } else {
+            console.error("We couldn't get your location.");
+          }
       });
     } else {
       console.error("Your browser doesn't have location services.");
@@ -81,7 +88,7 @@ var Conditions = React.createClass({
     console.log("Rendering temperature div.");
     console.log(this.props.conditions);
     return (
-      <div className="conditions">
+      <div className="conditions" id="conditions">
         It is currently {this.props.conditions.temp}&deg; and {this.props.conditions.text} in {this.props.location}.
       </div>
     )
